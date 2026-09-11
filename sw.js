@@ -6,12 +6,17 @@ self.addEventListener('push',event=>{
  const view=['floor','cast','timer'].includes(data.tab)?data.tab:'floor';
  let url=new URL('?view='+view,self.registration.scope).href;
  try{const candidate=new URL(data.url);if(candidate.origin===self.location.origin&&candidate.href.startsWith(self.registration.scope))url=candidate.href}catch{}
- event.waitUntil(self.registration.showNotification(String(data.title||'Hanabiのお知らせ').slice(0,80),{
+ event.waitUntil((async()=>{await self.registration.showNotification(String(data.title||data.notification?.title||'Hanabiのお知らせ').slice(0,80),{
   body:String(data.body||'アプリを開いて内容をご確認ください。').slice(0,240),
   icon:new URL('icon-192.png',self.registration.scope).href,
   badge:new URL('icon-192.png',self.registration.scope).href,
-  tag:String(data.id||'hanabi-notice').slice(0,200),data:{url,view}
- }));
+  tag:String(data.id||'hanabi-notice').slice(0,200),silent:false,data:{url,view}
+ });
+ const receipt=data.receipt;
+ if(receipt&&/^[a-f0-9]{64}$/.test(receipt.objectId)&&/^[a-f0-9]{64}$/.test(receipt.token))try{
+  await fetch('https://hanabi-table-book.zzjp5h5ydx.chatgpt.site/api/push',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',body:JSON.stringify({type:'receipt',objectId:receipt.objectId,token:receipt.token}),signal:AbortSignal.timeout(8000)});
+ }catch{}
+ })());
 });
 self.addEventListener('notificationclick',event=>{
  event.notification.close();
