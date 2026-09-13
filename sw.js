@@ -8,8 +8,8 @@ self.addEventListener('push',event=>{
  try{const candidate=new URL(data.url);if(candidate.origin===self.location.origin&&candidate.href.startsWith(self.registration.scope))url=candidate.href}catch{}
  event.waitUntil((async()=>{await self.registration.showNotification(String(data.title||data.notification?.title||'Hanabiのお知らせ').slice(0,80),{
   body:String(data.body||'アプリを開いて内容をご確認ください。').slice(0,240),
-  icon:new URL('icon-192.png',self.registration.scope).href,
-  badge:new URL('icon-192.png',self.registration.scope).href,
+  icon:new URL('icon-192.png?v=dbb4e26f39a5',self.registration.scope).href,
+  badge:new URL('icon-192.png?v=dbb4e26f39a5',self.registration.scope).href,
   tag:String(data.id||'hanabi-notice').slice(0,200),silent:false,data:{url,view}
  });
  const receipt=data.receipt;
