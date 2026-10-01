@@ -91,6 +91,8 @@ self.addEventListener('notificationclick', (event) => {
       const client = windows.find(
         (c) =>
           c.url.startsWith(self.registration.scope) &&
+          new URL(c.url).searchParams.get('mode') !== 'cafe' &&
+          !new URL(c.url).pathname.endsWith('/cafe-demo') &&
           new URL(c.url).pathname === new URL(url).pathname,
       );
       if (client) {
